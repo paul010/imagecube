@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { OpenAI } from 'openai';
 
 const client = new OpenAI({
-  apiKey: process.env.SILICONFLOW_API_KEY,
-  baseURL: 'https://api.siliconflow.cn/v1/',
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 const systemPrompt = `You are an AI artist skilled in creating vivid and detailed image descriptions. Your task is to generate an optimized English prompt for Stable Diffusion based on the user's description. Please follow these guidelines:
