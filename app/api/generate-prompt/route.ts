@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { OpenAI } from 'openai';
 
+// 确保在服务器端运行
+if (!process.env.OPENAI_API_KEY) {
+  throw new Error('Missing OPENAI_API_KEY environment variable');
+}
+
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -22,10 +27,24 @@ Please generate a similarly detailed and imaginative prompt based on the user's 
 
 export async function POST(req: NextRequest) {
   try {
+    if (!process.env.OPENAI_API_KEY) {
+      return NextResponse.json(
+        { error: 'OpenAI API key not configured' },
+        { status: 500 }
+      );
+    }
+
     const { userDescription } = await req.json();
 
+    if (!userDescription) {
+      return NextResponse.json(
+        { error: 'User description is required' },
+        { status: 400 }
+      );
+    }
+
     const response = await client.chat.completions.create({
-      model: 'deepseek-ai/DeepSeek-V3',
+      model: 'gpt-3.5-turbo',  // 使用支持的模型
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userDescription }
@@ -34,13 +53,21 @@ export async function POST(req: NextRequest) {
       max_tokens: 500
     });
 
+    if (!response.choices[0].message?.content) {
+      throw new Error('No response from OpenAI');
+    }
+
     const generatedPrompt = response.choices[0].message.content;
 
     return NextResponse.json({ prompt: generatedPrompt });
   } catch (error) {
     console.error('Prompt generation error:', error);
+    
+    // 更好的错误处理
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+    
     return NextResponse.json(
-      { error: `Prompt generation failed: ${(error as Error).message}` }, 
+      { error: `Prompt generation failed: ${errorMessage}` },
       { status: 500 }
     );
   }
