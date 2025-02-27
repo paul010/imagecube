@@ -1,0 +1,5 @@
+graph LR
+    A[用户请求] --> B[生成随机号码]
+    B --> C[存储到 Firestore]
+    C --> D[号码集合/Numbers]
+    D --> E[包含字段:<br/>number: 手机号<br/>created: 时间戳<br/>used: 使用状态]

@@ -1,0 +1,14 @@
+# https://randomphonesnumbers.com/robots.txt
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://randomphonesnumbers.com/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 10
+
+# Disallow admin and api routes
+Disallow: /admin/
+Disallow: /api/ 
